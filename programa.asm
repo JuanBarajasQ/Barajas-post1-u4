@@ -39,7 +39,58 @@ main:
  mov ah, 09h ; función DOS: imprimir cadena
  mov dx, bienvenida ; DX = dirección del mensaje
  int 21h ; llamar a DOS
+ 
  mov dx, separador
+ int 21h
+
+ ; === Función 09h: imprimir cadenas ===
+ mov ah, 09h
+ mov dx, etiqueta_a
+ int 21h
+
+ ; === Función 02h: imprimir un carácter ===
+ ; Imprimir el valor de var_word como dos dígitos hexadecimales
+ mov al, [var_byte] ; AL = 42 (0x2A)
+ add al, 30h ; convertir a ASCII: 42 + 48 = 90 ("Z"), solo para demo
+ mov ah, 02h ; función DOS: imprimir carácter en DL
+ mov dl, al
+ int 21h
+
+ ; Imprimir nueva línea
+ mov ah, 02h
+ mov dl, CR
+ int 21h
+ mov dl, LF
+ int 21h
+
+ ; === Recorrer tabla de bytes e imprimir cada elemento ===
+ lea si, tabla_bytes ; SI apunta al inicio de la tabla
+ mov cx, ITERACIONES ; CX = 5 iteraciones
+
+imprimir_tabla:
+ mov al, [si] ; AL = byte actual de la tabla
+ add al, 30h ; conversión simple a ASCII (válida para 0-9)
+ mov ah, 02h
+ mov dl, al
+ int 21h
+
+ mov ah, 02h ; imprimir espacio entre elementos
+ mov dl, 20h
+ int 21h
+
+ inc si ; avanzar al siguiente byte
+ loop imprimir_tabla ; CX--; si CX != 0, repetir
+
+ ; Imprimir nueva línea después de la tabla
+ mov ah, 02h
+ mov dl, CR
+ int 21h
+ mov dl, LF
+ int 21h
+
+ ; Imprimir mensaje de finalización 
+ mov ah, 09h
+ mov dx, fin_msg
  int 21h
 
  ; Terminar el programa
